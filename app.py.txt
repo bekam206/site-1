@@ -1,0 +1,25 @@
+from flask import Flask, request
+import requests
+import os
+
+app = Flask(__name__)
+
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+TELEGRAM_API_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+@app.route('/message', methods=['POST'])
+def send_message():
+    message = request.json.get('message')
+    if message:
+        data = {
+            'chat_id': CHAT_ID,
+            'text': message
+        }
+        requests.post(TELEGRAM_API_URL, data=data)
+        return "Message sent", 200
+    return "No message provided", 400
+
+@app.route('/')
+def home():
+    return "Бот работает!", 200
